@@ -1,0 +1,6 @@
+#!/bin/bash
+if grep -q 'LANG=en' /etc/locale.conf; then
+  kdialog --title "Install LithOS" --msgbox "The LithOS installer is coming in the next build (phase 2)."
+else
+  kdialog --title "LithOS installieren" --msgbox "Der LithOS-Installer kommt im nächsten Build (Phase 2)."
+fi
