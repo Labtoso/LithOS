@@ -17,16 +17,18 @@ document.getElementById('year').textContent = new Date().getFullYear();
 // Fill the download box from the latest GitHub release
 const fmtSize = (b) => (b / 1024 ** 3).toFixed(2).replace('.', ',') + ' GB';
 
-fetch('https://api.github.com/repos/Labtoso/LithOS/releases/latest', {
+fetch('https://api.github.com/repos/Labtoso/LithOS/releases?per_page=10', {
   headers: { Accept: 'application/vnd.github+json' },
 })
   .then((r) => (r.ok ? r.json() : null))
-  .then((rel) => {
+  .then((list) => {
+    const rel = Array.isArray(list) ? list.find((r) => !r.draft) : null;
     if (!rel || !rel.assets) return;
     const iso = rel.assets.find((a) => a.name.toLowerCase().endsWith('.iso'));
     if (!iso) return;
 
-    document.getElementById('dl-version').textContent = rel.name || rel.tag_name;
+    document.getElementById('dl-version').textContent =
+      (rel.name || rel.tag_name) + (rel.prerelease ? ' · Vorschau' : '');
     document.getElementById('dl-btn').href = iso.browser_download_url;
     const date = new Date(rel.published_at).toLocaleDateString('de-DE');
     document.getElementById('dl-meta').textContent =
