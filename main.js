@@ -27,8 +27,10 @@ fetch('https://api.github.com/repos/Labtoso/LithOS/releases?per_page=10', {
     const iso = rel.assets.find((a) => a.name.toLowerCase().endsWith('.iso'));
     if (!iso) return;
 
-    document.getElementById('dl-version').textContent =
-      (rel.name || rel.tag_name) + (rel.prerelease ? ' · Vorschau' : '');
+    const name = (rel.name || rel.tag_name).replace('(Preview)', '(Vorschau)');
+    document.getElementById('dl-version').textContent = name;
+    const meta = document.getElementById('hero-meta');
+    if (meta) meta.textContent = `Aktuell: ${name.replace(/^LithOS\s*/, '')} · x86_64 · UEFI und BIOS`;
     document.getElementById('dl-btn').href = iso.browser_download_url;
     const date = new Date(rel.published_at).toLocaleDateString('de-DE');
     document.getElementById('dl-meta').textContent =
