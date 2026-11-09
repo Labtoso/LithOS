@@ -47,7 +47,7 @@
             <a class="btn" href="#download">Herunterladen</a>
             <a class="btn btn-ghost" href="https://github.com/Labtoso/LithOS/tree/lithos" rel="noopener">Quellcode</a>
           </div>
-          <p class="hero-meta" id="hero-meta">Aktuell: 1.0 „Granit“, Vorschau · x86_64 · UEFI und BIOS</p>
+          <p class="hero-meta" id="hero-meta">Aktuell: 1.1 „Granit“ · x86_64 · UEFI und BIOS</p>
         </div>
         <figure class="shot hero-shot">
           <img src="assets/desktop.png" alt="LithOS-Desktop nach dem Start des Live-Systems" width="1280" height="800">
@@ -59,21 +59,21 @@
       <div class="wrap">
         <div class="section-head">
           <h2>Was drin ist</h2>
-          <p>Version 1.0 ist eine Vorschau: Das Live-System läuft, der Installer und die Willkommens-App folgen.</p>
+          <p>Version 1.1 bringt den eigenen Kernel, den Installer, automatische Treiber und die Willkommens-App.</p>
         </div>
         <table class="spec">
           <thead><tr><th>Bereich</th><th>Was LithOS nutzt</th><th>Stand</th></tr></thead>
           <tbody>
-            <tr><td>Basis</td><td>Arch Linux, Rolling Release</td><td><span class="tag ok">in 1.0</span></td></tr>
-            <tr><td>Desktop</td><td>KDE Plasma 6, Taskleiste unten, dunkles Design</td><td><span class="tag ok">in 1.0</span></td></tr>
-            <tr><td>Kernel</td><td><code>linux-cachyos</code>, später der eigene <code>linux-lithos</code></td><td><span class="tag ok">in 1.0</span></td></tr>
-            <tr><td>Start</td><td>GRUB mit Deutsch und Englisch, Bootlogo mit Plymouth</td><td><span class="tag ok">in 1.0</span></td></tr>
-            <tr><td>Grafik</td><td>Treiber für Nvidia, AMD und Intel automatisch</td><td><span class="tag">geplant</span></td></tr>
-            <tr><td>Installer</td><td>„Install LithOS“ auf dem Desktop, btrfs mit Snapshots, optional verschlüsselt</td><td><span class="tag">geplant</span></td></tr>
-            <tr><td>Willkommens-App</td><td>Spiele, Programmieren, Office, Wine per Häkchen</td><td><span class="tag">geplant</span></td></tr>
-            <tr><td>Pakete</td><td>Arch, AUR, Flathub</td><td><span class="tag">geplant</span></td></tr>
-            <tr><td>Programme</td><td>Helium (Browser), Kitty (Terminal), fish (Shell)</td><td><span class="tag">geplant</span></td></tr>
-            <tr><td>Updates</td><td>Meldung bei neuen Updates, installiert wird nur nach Bestätigung</td><td><span class="tag">geplant</span></td></tr>
+            <tr><td>Basis</td><td>Arch Linux, Rolling Release</td><td><span class="tag ok">in 1.1</span></td></tr>
+            <tr><td>Desktop</td><td>KDE Plasma 6, Taskleiste unten, dunkles LithOS-Design, Akzentfarbe wählbar</td><td><span class="tag ok">in 1.1</span></td></tr>
+            <tr><td>Kernel</td><td>Eigener <code>linux-lithos</code>: CachyOS-Patches, BORE-Scheduler, gehärtet</td><td><span class="tag ok">in 1.1</span></td></tr>
+            <tr><td>Start</td><td>GRUB im LithOS-Design, Startbildschirm mit Plymouth, Snapshots im Bootmenü</td><td><span class="tag ok">in 1.1</span></td></tr>
+            <tr><td>Grafik</td><td>Treiber für Nvidia, AMD, Intel, WLAN und Handhelds automatisch</td><td><span class="tag ok">in 1.1</span></td></tr>
+            <tr><td>Installer</td><td>„LithOS installieren“ auf dem Desktop, btrfs mit Snapshots, optional verschlüsselt</td><td><span class="tag ok">in 1.1</span></td></tr>
+            <tr><td>Willkommens-App</td><td>Spiele, Programmieren, Office und weitere Desktops per Häkchen, dazu die LithOS-Einstellungen</td><td><span class="tag ok">in 1.1</span></td></tr>
+            <tr><td>Pakete</td><td>Arch, CachyOS, AUR (paru), Flathub</td><td><span class="tag ok">in 1.1</span></td></tr>
+            <tr><td>Programme</td><td>Helium (Browser), Kitty (Terminal), fish (Shell)</td><td><span class="tag ok">in 1.1</span></td></tr>
+            <tr><td>Updates</td><td>Meldung bei neuen Updates, installiert wird nur nach Bestätigung, vorher Snapshot</td><td><span class="tag ok">in 1.1</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -89,7 +89,7 @@
             <div class="dl-title">
               <img src="assets/logo.svg" alt="" width="48" height="48">
               <div>
-                <h3 id="dl-version">LithOS Live-ISO</h3>
+                <h3 id="dl-version">LithOS-ISO</h3>
                 <p class="muted" id="dl-meta">x86_64 · UEFI und BIOS · KDE Plasma</p>
               </div>
             </div>
@@ -114,16 +114,17 @@
     <section id="install" class="section section-alt">
       <div class="wrap narrow">
         <div class="section-head">
-          <h2>Live-System starten</h2>
+          <h2>Starten und installieren</h2>
         </div>
         <ol class="howto">
           <li>ISO auf einen USB-Stick schreiben, zum Beispiel mit <a href="https://www.ventoy.net/" rel="noopener">Ventoy</a> oder <a href="https://etcher.balena.io/" rel="noopener">balenaEtcher</a>.</li>
           <li>Rechner vom Stick starten und im Bootmenü Deutsch oder Englisch wählen.</li>
           <li>Das Live-System meldet sich selbst an. Auf der Festplatte wird nichts verändert.</li>
+          <li>Zum festen Installieren „LithOS installieren“ auf dem Desktop öffnen. Treiber werden dabei automatisch eingerichtet.</li>
         </ol>
         <p class="muted">Unter Linux geht es auch ohne Zusatzprogramm (<code>sdX</code> durch den Stick ersetzen):</p>
-        <pre class="term">sudo dd if=LithOS-1.0-Granit-live-x86_64.iso of=/dev/sdX bs=4M status=progress oflag=sync</pre>
-        <p class="muted">Download prüfen: <code>sha256sum -c LithOS-1.0-Granit-live-x86_64.iso.sha256</code></p>
+        <pre class="term">sudo dd if=LithOS-1.1-Granit-x86_64.iso of=/dev/sdX bs=4M status=progress oflag=sync</pre>
+        <p class="muted">Download prüfen: <code>sha256sum -c LithOS-1.1-Granit-x86_64.iso.sha256</code></p>
       </div>
     </section>
 
@@ -137,8 +138,8 @@
           <p>Nein. Der Quellcode des ISO-Profils liegt offen auf GitHub im Branch <code>lithos</code>.</p>
         </details>
         <details>
-          <summary>Kann ich LithOS schon installieren?</summary>
-          <p>Noch nicht. Version 1.0 ist ein Live-System zum Ausprobieren. Der Installer kommt mit der nächsten Version.</p>
+          <summary>Kann ich LithOS installieren?</summary>
+          <p>Ja. Ab Version 1.1 startest du im Live-System „LithOS installieren“ auf dem Desktop.</p>
         </details>
         <details>
           <summary>Läuft es in einer virtuellen Maschine?</summary>
