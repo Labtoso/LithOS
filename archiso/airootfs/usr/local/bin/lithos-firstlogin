@@ -1,0 +1,15 @@
+#!/bin/bash
+# einmal nach dem ersten Login: Dunkles Theme, LithOS-Hintergrund, Startknopf-Logo, Taskleisten-Apps
+for i in $(seq 1 60); do
+  gdbus call --session --dest org.kde.plasmashell --object-path /PlasmaShell --method org.freedesktop.DBus.Peer.Ping >/dev/null 2>&1 && break
+  sleep 2
+done
+sleep 3
+plasma-apply-lookandfeel -a org.lithos.desktop >/dev/null 2>&1
+plasma-apply-wallpaperimage /usr/share/wallpapers/LithOS/contents/images/1920x1080.png >/dev/null 2>&1
+JS='panels().forEach(function(p){p.widgets().forEach(function(w){
+ if(w.type=="org.kde.plasma.kickoff"){w.currentConfigGroup=["General"];w.writeConfig("icon","lithos-logo");w.reloadConfig();}
+ if(w.type=="org.kde.plasma.icontasks"||w.type=="org.kde.plasma.taskmanager"){w.currentConfigGroup=["General"];w.writeConfig("launchers",["applications:org.kde.dolphin.desktop","applications:helium.desktop","applications:kitty.desktop","applications:org.kde.kate.desktop","applications:lithos-settings.desktop"]);w.reloadConfig();}
+});});'
+gdbus call --session --dest org.kde.plasmashell --object-path /PlasmaShell --method org.kde.PlasmaShell.evaluateScript "$JS" >/dev/null 2>&1
+rm -f "$HOME/.config/autostart/lithos-firstlogin.desktop"

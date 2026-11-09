@@ -1,0 +1,6 @@
+[Unit]
+Description=LithOS: nach Updates schauen und melden
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/lithos/lithos-update-check

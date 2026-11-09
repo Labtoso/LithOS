@@ -1,0 +1,11 @@
+NAME="LithOS"
+PRETTY_NAME="LithOS 1.1 Granit (Live)"
+ID=lithos
+ID_LIKE=arch
+BUILD_ID=rolling
+VERSION="1.1 (Granit)"
+VERSION_ID=1.1
+VERSION_CODENAME=granit
+ANSI_COLOR="38;2;59;130;246"
+HOME_URL="https://lithos.labtoso.de"
+LOGO=lithos-logo

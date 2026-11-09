@@ -1,0 +1,92 @@
+#!/bin/bash
+# LithOS: Aufräumen und Einrichten im installierten System (läuft im chroot über Calamares)
+step="$1"
+
+if [ "$step" = before ]; then
+  # Live-Dateien entfernen
+  rm -f /etc/sudoers.d/10-lithos-live
+  rm -f /etc/sddm.conf.d/10-lithos.conf
+  rm -f /etc/mkinitcpio.conf.d/archiso.conf
+  rm -rf /etc/systemd/system/getty@tty1.service.d
+  rm -f /etc/systemd/system/multi-user.target.wants/lithos-live-setup.service \
+        /etc/systemd/system/lithos-live-setup.service \
+        /etc/systemd/system/multi-user.target.wants/choose-mirror.service \
+        /etc/systemd/system/choose-mirror.service \
+        /etc/systemd/system/multi-user.target.wants/pacman-init.service \
+        /etc/systemd/system/pacman-init.service \
+        /etc/systemd/system/etc-pacman.d-gnupg.mount
+  rm -f /etc/systemd/journald.conf.d/volatile-storage.conf \
+        /etc/systemd/logind.conf.d/do-not-suspend.conf
+  rm -f /usr/local/bin/lithos-live-setup /usr/local/bin/lithos-install
+  rm -f /root/.automated_script.sh /root/.zlogin /etc/motd
+  sed -i 's/ (Live)//' /etc/os-release
+  # SDDM ohne Auto-Login, im LithOS-Stil
+  mkdir -p /etc/sddm.conf.d
+  printf '[Theme]\nCurrent=breeze\nCursorTheme=breeze_cursors\n\n[General]\nDisplayServer=wayland\n' > /etc/sddm.conf.d/10-lithos.conf
+  # mkinitcpio: normale Hooks mit Plymouth (initcpiocfg passt danach an)
+  if [ -f /etc/mkinitcpio.conf ]; then
+    sed -i 's/^HOOKS=.*/HOOKS=(base systemd autodetect microcode modconf kms keyboard sd-vconsole block plymouth filesystems fsck)/' /etc/mkinitcpio.conf
+  fi
+  rm -f /boot/initramfs-*-fallback.img
+  # Paketquellen: LithOS (Kernel, Apps), CachyOS, Arch, multilib (32-Bit für Spiele und Treiber)
+  if ! grep -q '^\[cachyos\]' /etc/pacman.conf; then
+    sed -i 's/^\[core\]/[cachyos]\nInclude = \/etc\/pacman.d\/cachyos-mirrorlist\n\n[core]/' /etc/pacman.conf
+  fi
+  if ! grep -q '^\[lithos\]' /etc/pacman.conf; then
+    sed -i 's/^\[cachyos\]/[lithos]\nSigLevel = Optional TrustAll\nServer = https:\/\/github.com\/Labtoso\/LithOS\/releases\/download\/repo\n\n[cachyos]/' /etc/pacman.conf
+  fi
+  if ! grep -q '^\[multilib\]' /etc/pacman.conf; then
+    printf '\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> /etc/pacman.conf
+  fi
+  exit 0
+fi
+
+if [ "$step" = after ]; then
+  # Paketschlüssel neu anlegen (im Live-System lagen sie im RAM)
+  pacman-key --init >/dev/null 2>&1
+  pacman-key --populate archlinux cachyos >/dev/null 2>&1
+  # Installer aus dem fertigen System entfernen
+  pacman -Rns --noconfirm lithos-calamares >/dev/null 2>&1 || true
+  rm -rf /etc/lithos/calamares /etc/calamares
+  # Firewall: eingehend blockieren, ausgehend erlauben
+  if [ -f /etc/ufw/ufw.conf ]; then
+    sed -i 's/^ENABLED=.*/ENABLED=yes/' /etc/ufw/ufw.conf
+    sed -i 's/^DEFAULT_INPUT_POLICY=.*/DEFAULT_INPUT_POLICY="DROP"/; s/^DEFAULT_OUTPUT_POLICY=.*/DEFAULT_OUTPUT_POLICY="ACCEPT"/' /etc/default/ufw 2>/dev/null
+    systemctl enable ufw >/dev/null 2>&1
+  fi
+  # btrfs: Snapshots mit snapper + Eintrag im GRUB-Menü
+  if [ "$(findmnt -no FSTYPE /)" = btrfs ] && command -v snapper >/dev/null; then
+    umount /.snapshots 2>/dev/null; rm -rf /.snapshots
+    snapper --no-dbus -c root create-config / >/dev/null 2>&1
+    sed -i 's/^TIMELINE_CREATE=.*/TIMELINE_CREATE="no"/; s/^NUMBER_LIMIT=.*/NUMBER_LIMIT="10"/' /etc/snapper/configs/root 2>/dev/null
+    snapper --no-dbus -c root create --description "LithOS Installation" --userdata important=yes >/dev/null 2>&1
+    systemctl enable snapper-cleanup.timer grub-btrfsd >/dev/null 2>&1
+  fi
+  systemctl enable systemd-zram-setup@zram0 >/dev/null 2>&1 || true
+  # Sicherheit: AppArmor, Kernel-Schutzparameter
+  systemctl enable apparmor >/dev/null 2>&1 || true
+  if [ -f /etc/default/grub ]; then
+    # LithOS-GRUB-Design
+    if [ -d /usr/share/grub/themes/lithos ]; then
+      f=/usr/share/fonts/noto/NotoSans-Regular.ttf
+      [ -f "$f" ] && for s in 14 18 24; do grub-mkfont -s $s -o /usr/share/grub/themes/lithos/noto-$s.pf2 "$f" >/dev/null 2>&1; done
+      grep -q '^GRUB_THEME=' /etc/default/grub && sed -i 's|^GRUB_THEME=.*|GRUB_THEME="/usr/share/grub/themes/lithos/theme.txt"|' /etc/default/grub || echo 'GRUB_THEME="/usr/share/grub/themes/lithos/theme.txt"' >> /etc/default/grub
+      sed -i 's|^GRUB_GFXMODE=.*|GRUB_GFXMODE=auto|; s|^#\?GRUB_TERMINAL_OUTPUT=.*|#GRUB_TERMINAL_OUTPUT=console|' /etc/default/grub
+    fi
+  fi
+  # Hardware: passende Treiber automatisch (Grafik inkl. Nvidia, WLAN, Handhelds, VMs)
+  if command -v chwd >/dev/null && ping -c1 -W3 archlinux.org >/dev/null 2>&1; then
+    pacman -Sy >/dev/null 2>&1
+    pacman -S --needed --noconfirm dkms >/var/log/lithos-chwd.log 2>&1 || true
+    chwd -a >>/var/log/lithos-chwd.log 2>&1 || true
+  else
+    systemctl enable lithos-hwsetup.service >/dev/null 2>&1 || true
+  fi
+  # Update-Melder für alle Benutzer, Drucker, Firmware
+  systemctl --global enable lithos-update-check.timer >/dev/null 2>&1 || true
+  systemctl enable cups.socket bluetooth power-profiles-daemon >/dev/null 2>&1 || true
+  xdg-user-dirs-update >/dev/null 2>&1 || true
+  mkinitcpio -P >/dev/null 2>&1 || true
+  grub-mkconfig -o /boot/grub/grub.cfg >/dev/null 2>&1 || true
+  exit 0
+fi

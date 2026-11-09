@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=LithOS First Login
+Exec=/usr/local/bin/lithos-firstlogin
+X-KDE-autostart-phase=2
+NoDisplay=true

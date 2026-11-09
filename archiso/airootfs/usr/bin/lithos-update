@@ -1,0 +1,13 @@
+#!/bin/bash
+# LithOS-Update: zeigt alles an, fragt, dann wird aktualisiert (snap-pac legt vorher einen Snapshot an)
+echo "LithOS Update"
+echo
+checkupdates 2>/dev/null
+command -v paru >/dev/null && paru -Qua 2>/dev/null
+echo
+read -rp "Jetzt aktualisieren? [J/n] " a
+case "$a" in n|N) exit 0;; esac
+if command -v paru >/dev/null; then paru -Syu; else sudo pacman -Syu; fi
+command -v flatpak >/dev/null && flatpak update -y
+echo
+read -rp "Fertig. Enter zum Schließen." _

@@ -1,0 +1,16 @@
+#!/bin/bash
+# Meldet verfügbare Updates. Installiert nie selbst, nur nach Klick auf "Jetzt aktualisieren".
+conf="$HOME/.config/lithos/updates.conf"
+[ -f "$conf" ] && . "$conf"
+[ "${ENABLED:-1}" = 0 ] && exit 0
+n=$(checkupdates 2>/dev/null | wc -l)
+a=0; command -v paru >/dev/null && a=$(paru -Qua 2>/dev/null | wc -l)
+f=0; command -v flatpak >/dev/null && f=$(flatpak remote-ls --updates 2>/dev/null | wc -l)
+total=$((n + a + f))
+[ "$total" -eq 0 ] && exit 0
+txt="$total Updates verfügbar"
+[ "$a" -gt 0 ] || [ "$f" -gt 0 ] && txt="$txt ($n System, $a AUR, $f Flatpak)"
+r=$(notify-send -a "LithOS" -i system-software-update -u normal --wait \
+    -A update="Jetzt aktualisieren" -A later="Später" "Updates verfügbar" "$txt. Vorher wird automatisch ein Snapshot angelegt.")
+[ "$r" = update ] && exec kitty --title "LithOS Update" /usr/bin/lithos-update
+exit 0

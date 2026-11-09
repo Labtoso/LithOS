@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=LithOS
+Description=LithOS Startbildschirm
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/lithos
+ScriptFile=/usr/share/plymouth/themes/lithos/lithos.script

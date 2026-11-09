@@ -1,0 +1,11 @@
+[Unit]
+Description=LithOS: Treiber automatisch einrichten, sobald Internet da ist
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/lithos/lithos-hwsetup
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,32 @@
+# LithOS GRUB-Design
+title-text: ""
+desktop-image: "background.png"
+desktop-color: "#0d1117"
+terminal-font: "Noto Sans Regular 14"
+terminal-box: "select_*.png"
+
++ boot_menu {
+  left = 30%
+  top = 42%
+  width = 40%
+  height = 40%
+  item_font = "Noto Sans Regular 18"
+  item_color = "#8b949e"
+  selected_item_color = "#ffffff"
+  item_height = 40
+  item_padding = 12
+  item_spacing = 6
+  selected_item_pixmap_style = "select_*.png"
+  scrollbar = false
+}
+
++ label {
+  top = 100%-50
+  left = 0
+  width = 100%
+  height = 20
+  align = "center"
+  font = "Noto Sans Regular 14"
+  color = "#6e7681"
+  text = "Pfeiltasten zum Wählen, Enter zum Starten, E zum Bearbeiten"
+}

@@ -1,0 +1,8 @@
+#!/bin/bash
+# Holt fehlende Treiber nach (z. B. wenn ohne Internet installiert wurde)
+for i in $(seq 1 30); do ping -c1 -W3 archlinux.org >/dev/null 2>&1 && break; sleep 10; done
+ping -c1 -W3 archlinux.org >/dev/null 2>&1 || exit 0
+pacman -Sy >/dev/null 2>&1
+pacman -S --needed --noconfirm dkms >>/var/log/lithos-chwd.log 2>&1
+chwd -a >>/var/log/lithos-chwd.log 2>&1 && systemctl disable lithos-hwsetup.service >/dev/null 2>&1
+exit 0

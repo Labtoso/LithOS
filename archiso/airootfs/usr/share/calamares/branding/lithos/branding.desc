@@ -1,0 +1,34 @@
+---
+componentName:  lithos
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 1024px,640px
+windowPlacement: center
+sidebar: widget
+navigation: widget
+
+strings:
+    productName:         LithOS
+    shortProductName:    LithOS
+    version:             1.1 Granit
+    shortVersion:        1.0
+    versionedName:       LithOS 1.1 Granit
+    shortVersionedName:  LithOS 1.0
+    bootloaderEntryName: LithOS
+    productUrl:          https://lithos.labtoso.de
+    supportUrl:          https://github.com/Labtoso/LithOS/issues
+
+images:
+    productLogo:    "logo.png"
+    productIcon:    "icon.png"
+    productWelcome: "welcome.png"
+
+style:
+   SidebarBackground:        "#0d1117"
+   SidebarText:              "#E5E7EB"
+   SidebarTextCurrent:       "#FFFFFF"
+   SidebarBackgroundCurrent: "#2563EB"
+
+slideshow: "show.qml"
+slideshowAPI: 2

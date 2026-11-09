@@ -1,0 +1,57 @@
+#!/bin/bash
+# LithOS Live: Sprache (lithos.lang=de|en aus der Kernel-Zeile) und Live-Benutzer
+lang=de
+for a in $(cat /proc/cmdline); do case "$a" in lithos.lang=*) lang="${a#lithos.lang=}";; esac; done
+if [ "$lang" = en ]; then L=en_US.UTF-8; KB=us; LG=en_US; else L=de_DE.UTF-8; KB=de; LG=de; fi
+sed -i "s/^#\(${L} UTF-8\)/\1/" /etc/locale.gen
+grep -q "^${L} UTF-8" /etc/locale.gen || echo "${L} UTF-8" >> /etc/locale.gen
+locale-gen >/dev/null 2>&1
+echo "LANG=${L}" > /etc/locale.conf
+echo "KEYMAP=${KB}" > /etc/vconsole.conf
+mkdir -p /etc/X11/xorg.conf.d
+printf 'Section "InputClass"\n  Identifier "keyboard"\n  MatchIsKeyboard "on"\n  Option "XkbLayout" "%s"\nEndSection\n' "$KB" > /etc/X11/xorg.conf.d/00-keyboard.conf
+if ! id lithos >/dev/null 2>&1; then
+  useradd -m -G wheel,video,audio,input,network -s /usr/bin/fish -c "LithOS Live" lithos
+  passwd -d lithos >/dev/null
+fi
+H=/home/lithos
+mkdir -p $H/.config $H/Desktop
+printf '[Layout]\nLayoutList=%s\nUse=true\n' "$KB" > $H/.config/kxkbrc
+printf '[Formats]\nLANG=%s\n\n[Translations]\nLANGUAGE=%s\n' "$L" "$LG" > $H/.config/plasma-localerc
+cat > $H/.config/kdeglobals <<'K'
+[General]
+AccentColor=59,130,246
+ColorScheme=BreezeDark
+
+[KDE]
+LookAndFeelPackage=org.kde.breezedark.desktop
+K
+cat > $H/.config/kscreenlockerrc <<'K'
+[Daemon]
+Autolock=false
+LockOnResume=false
+Timeout=0
+K
+cat > $H/.config/powerdevilrc <<'K'
+[AC][Display]
+TurnOffDisplayWhenIdle=false
+DimDisplayWhenIdle=false
+[AC][SuspendAndShutdown]
+AutoSuspendAction=0
+[Battery][Display]
+TurnOffDisplayWhenIdle=false
+DimDisplayWhenIdle=false
+[Battery][SuspendAndShutdown]
+AutoSuspendAction=0
+K
+if [ "$lang" = en ]; then NAME="Install LithOS"; else NAME="LithOS installieren"; fi
+cat > $H/Desktop/install-lithos.desktop <<D
+[Desktop Entry]
+Type=Application
+Name=${NAME}
+Exec=/usr/local/bin/lithos-install
+Icon=lithos-logo
+Terminal=false
+D
+chmod +x $H/Desktop/install-lithos.desktop
+chown -R lithos:lithos $H

@@ -1,0 +1,10 @@
+[Unit]
+Description=LithOS: regelmäßig nach Updates schauen
+
+[Timer]
+OnStartupSec=10min
+OnUnitActiveSec=4h
+Persistent=false
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,9 @@
+[General]
+AccentColor=59,130,246
+ColorScheme=BreezeDark
+
+[KDE]
+LookAndFeelPackage=org.lithos.desktop
+
+[Icons]
+Theme=Papirus-Dark

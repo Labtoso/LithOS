@@ -1,0 +1,13 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [ { "Name": "LabtosoStudios" } ],
+        "Category": "",
+        "Description": "Dunkles LithOS-Design mit Taskleiste unten",
+        "Id": "org.lithos.desktop",
+        "License": "GPL-2.0-or-later",
+        "Name": "LithOS",
+        "Version": "1.1"
+    },
+    "X-Plasma-APIVersion": "2"
+}
