@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=LithOS-Einstellungen
+Name[en]=LithOS Settings
+Comment=Aussehen, Updates, Kernel, Snapshots und Treiber
+Exec=lithos-settings
+Icon=lithos-logo
+Categories=System;Settings;
+Keywords=lithos;update;kernel;snapshot;treiber;accent;

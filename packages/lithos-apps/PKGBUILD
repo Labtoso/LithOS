@@ -1,0 +1,30 @@
+pkgname=lithos-apps
+pkgver=1.1.0
+pkgrel=2
+pkgdesc='LithOS Welcome and Settings'
+arch=('x86_64')
+url='https://lithos.labtoso.de'
+license=('GPL-3.0-or-later')
+depends=('qt6-base' 'qt6-declarative' 'kitty' 'pacman-contrib' 'libnotify')
+makedepends=('cargo' 'clang')
+source=('lithos-center.tar.gz')
+sha256sums=('SKIP')
+options=('!lto' '!debug')
+
+build() {
+  cd lithos-center
+  export QMAKE=/usr/bin/qmake6
+  cargo build --release --locked
+}
+
+package() {
+  cd lithos-center
+  install -Dm755 target/release/lithos-center "$pkgdir/usr/bin/lithos-center"
+  printf '#!/bin/sh\nexec lithos-center welcome "$@"\n' > lithos-welcome
+  printf '#!/bin/sh\nexec lithos-center settings "$@"\n' > lithos-settings
+  install -Dm755 lithos-welcome "$pkgdir/usr/bin/lithos-welcome"
+  install -Dm755 lithos-settings "$pkgdir/usr/bin/lithos-settings"
+  install -Dm644 data/lithos-welcome.desktop "$pkgdir/usr/share/applications/lithos-welcome.desktop"
+  install -Dm644 data/lithos-settings.desktop "$pkgdir/usr/share/applications/lithos-settings.desktop"
+  install -Dm644 data/lithos-welcome-autostart.desktop "$pkgdir/etc/xdg/autostart/lithos-welcome.desktop"
+}

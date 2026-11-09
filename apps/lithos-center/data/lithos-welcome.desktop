@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=LithOS Willkommen
+Name[en]=LithOS Welcome
+Comment=LithOS einrichten, Extras und Desktops installieren
+Exec=lithos-welcome
+Icon=lithos-logo
+Categories=System;Settings;
