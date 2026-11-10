@@ -107,6 +107,7 @@ p { margin: 0 0 1em; }
 .dl-title { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
 .dl-title h3 { font-size: 1.5rem; margin: 0 0 .15em; }
 .dl-title p { margin: 0; }
+.dl-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .dl-note { color: var(--muted); font-size: .93rem; margin: 1.2em 0 0; }
 .dl-sum { margin-top: 1.2em; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-size: .82rem; }
 .dl-sum span { color: var(--muted); font-family: var(--mono); }

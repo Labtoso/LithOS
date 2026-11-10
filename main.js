@@ -22,10 +22,12 @@ fetch('https://api.github.com/repos/Labtoso/LithOS/releases?per_page=10', {
 })
   .then((r) => (r.ok ? r.json() : null))
   .then((list) => {
-    const rel = Array.isArray(list) ? list.find((r) => !r.draft) : null;
-    if (!rel || !rel.assets) return;
-    const iso = rel.assets.find((a) => a.name.toLowerCase().endsWith('.iso'));
-    if (!iso) return;
+    const isIso = (a) => a.name.toLowerCase().endsWith('.iso');
+    const rel = Array.isArray(list)
+      ? list.find((r) => !r.draft && (r.assets || []).some(isIso))
+      : null;
+    if (!rel) return;
+    const iso = rel.assets.find(isIso);
 
     const name = (rel.name || rel.tag_name).replace('(Preview)', '(Vorschau)');
     document.getElementById('dl-version').textContent = name;
@@ -35,8 +37,6 @@ fetch('https://api.github.com/repos/Labtoso/LithOS/releases?per_page=10', {
     const date = new Date(rel.published_at).toLocaleDateString('de-DE');
     document.getElementById('dl-meta').textContent =
       `${fmtSize(iso.size)} · veröffentlicht am ${date} · x86_64 · UEFI und BIOS`;
-    document.getElementById('dl-note').innerHTML =
-      `Ältere Versionen und Änderungen findest du unter <a href="${rel.html_url.replace(/\/tag\/.*/, '')}" rel="noopener">GitHub Releases</a>.`;
 
     if (iso.digest && iso.digest.startsWith('sha256:')) {
       document.getElementById('dl-sha').textContent = iso.digest.slice(7);
